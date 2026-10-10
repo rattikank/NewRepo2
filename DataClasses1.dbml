@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Data_Project" Class="DataClasses1DataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="dbo.approvals" Member="approvals">
+    <Type Name="approval">
+      <Column Name="approval_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="requisition_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="staff_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="approval_level" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="approval_status" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="approval_date" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Association Name="requisition_approval" Member="requisition" ThisKey="requisition_id" OtherKey="requisition_id" Type="requisition" IsForeignKey="true" />
+      <Association Name="staff_approval" Member="staff" ThisKey="staff_id" OtherKey="staff_id" Type="staff" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.goods_receipts" Member="goods_receipts">
+    <Type Name="goods_receipt">
+      <Column Name="receipt_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="po_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="receipt_date" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="received_amount" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+      <Association Name="purchase_order_goods_receipt" Member="purchase_order" ThisKey="po_id" OtherKey="po_id" Type="purchase_order" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.po_items" Member="po_items">
+    <Type Name="po_item">
+      <Column Name="po_item_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="po_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="item_name" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="quantity" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="unit_price" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+      <Association Name="purchase_order_po_item" Member="purchase_order" ThisKey="po_id" OtherKey="po_id" Type="purchase_order" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.purchase_orders" Member="purchase_orders">
+    <Type Name="purchase_order">
+      <Column Name="po_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="requisition_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="vendor_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="po_date" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="total_amount" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+      <Column Name="status" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Association Name="purchase_order_goods_receipt" Member="goods_receipts" ThisKey="po_id" OtherKey="po_id" Type="goods_receipt" />
+      <Association Name="purchase_order_po_item" Member="po_items" ThisKey="po_id" OtherKey="po_id" Type="po_item" />
+      <Association Name="requisition_purchase_order" Member="requisition" ThisKey="requisition_id" OtherKey="requisition_id" Type="requisition" IsForeignKey="true" />
+      <Association Name="vendor_purchase_order" Member="vendor" ThisKey="vendor_id" OtherKey="vendor_id" Type="vendor" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.requisition_items" Member="requisition_items">
+    <Type Name="requisition_item">
+      <Column Name="requisition_item_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="requisition_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="item_name" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="quantity" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="unit_price" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+      <Association Name="requisition_requisition_item" Member="requisition" ThisKey="requisition_id" OtherKey="requisition_id" Type="requisition" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.requisitions" Member="requisitions">
+    <Type Name="requisition">
+      <Column Name="requisition_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="staff_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="request_date" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="department" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="status" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Association Name="requisition_approval" Member="approvals" ThisKey="requisition_id" OtherKey="requisition_id" Type="approval" />
+      <Association Name="requisition_purchase_order" Member="purchase_orders" ThisKey="requisition_id" OtherKey="requisition_id" Type="purchase_order" />
+      <Association Name="requisition_requisition_item" Member="requisition_items" ThisKey="requisition_id" OtherKey="requisition_id" Type="requisition_item" />
+      <Association Name="staff_requisition" Member="staff" ThisKey="staff_id" OtherKey="staff_id" Type="staff" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.staff" Member="staffs">
+    <Type Name="staff">
+      <Column Name="staff_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="staff_name" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="department" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Association Name="staff_approval" Member="approvals" ThisKey="staff_id" OtherKey="staff_id" Type="approval" />
+      <Association Name="staff_requisition" Member="requisitions" ThisKey="staff_id" OtherKey="staff_id" Type="requisition" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vendors" Member="vendors">
+    <Type Name="vendor">
+      <Column Name="vendor_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="vendor_name" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="phone" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Association Name="vendor_purchase_order" Member="purchase_orders" ThisKey="vendor_id" OtherKey="vendor_id" Type="purchase_order" />
+    </Type>
+  </Table>
+</Database>
